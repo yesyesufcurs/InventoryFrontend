@@ -1,0 +1,65 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="index.css">
+  <title>
+    Inventaris 2
+  </title>
+
+  <!-- Importing proper javascript libraries-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <script>window.$ = window.jQuery = require('jquery');
+  const _ = require('lodash')
+  </script>
+</head>
+
+<body>
+  <nav>
+    <ul>
+      <li><a id="navButtonHome">Homepage</a></li>
+      <li><a id="navButtonAdd">Add item</a></li>
+      <li><a id="navButtonModify">Change item</a></li>
+      <li><a id="navButtonRemove">Remove item</button></li>
+
+    </ul>
+  </nav>
+
+  <div class="content" id="mainContent">
+
+  </div>
+
+
+
+  <script defer>
+    //Dit wordt uitgevoerd wanneer de website klaar is met laden:
+    $(() => {
+      let data;
+      $("#mainContent").load("homepage.html")
+
+
+    })
+    $("#navButtonHome").on("click", () => {
+      $("#mainContent").empty()
+      delete data
+      $("#mainContent").load("homepage.html")
+    })
+    $("#navButtonAdd").on("click", () => {
+      $("#mainContent").empty()
+      delete data 
+      $("#mainContent").load("addItem.html");
+    })
+    $("#navButtonModify").on("click", () => {
+      $("#mainContent").empty()
+      $("#mainContent").load("homepage.html"); console.log("modify")
+    })
+    $("#navButtonRemove").on("click", () => {
+      $("#mainContent").empty()
+      $("#mainContent").load("homepage.html"); console.log("remove")
+    })
+
+  </script>
+
+</body>
+
+</html>

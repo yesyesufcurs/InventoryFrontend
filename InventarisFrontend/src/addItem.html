@@ -1,0 +1,104 @@
+<h3>Add Item to inventory.</h3>
+<p>The barcode is required. If no item name is inserted, the inventory will attempt to fetch it from internet.</p>
+<iframe name="nothing" style="display:none;"></iframe>
+<form id="addingItems" action="about:blank" target="nothing">
+    <table>
+        <tr>
+            <td>Product name:</td>
+            <td><input type="text" name="name"></td>
+        </tr>
+        <tr>
+            <td>Status:</td>
+            <td><select name='status'>
+                    <option value="stored">Stored</option>
+                    <option value="broken">Broken</option>
+                    <option value="reperation">In reperation</option>
+                    <option value="lost">Lost</option>
+                </select></td>
+        </tr>
+        <tr>
+            <td>Day of purchase:</td>
+            <td> <input type="date" name="date"></td>
+        </tr>
+        <tr>
+            <td>Storage place:</td>
+            <td><select name='storage'>
+                    <option value="TVcabinet">TV cabinet</option>
+                    <option value="bookcase">Bookcase</option>
+                    <option value="bed">Bed closet</option>
+                    <option value="bigroom">Big room</option>
+                    <option value="garage">Garage</option>
+                    <option value="desk">Desk</option>
+                </select></td>
+        </tr>
+        <tr>
+            <td>Barcode: </td>
+            <td><input type="text" name="barcode" required></td>
+        </tr>
+        <tr>
+            <td>Factuur:</td>
+            <td><input type="file" name="file" accept=".pdf"></td>
+        </tr>
+        <tr>
+            <!-- <td><input type="submit" name="submit" value="Submit"></td> -->
+            <td><button id="formSubmit">Submit</button></td>
+        </tr>
+    </table>
+</form>
+
+</table>
+<div id="statusOfAddItem"></div>
+<script defer>
+    $("#formSubmit").on("click", () => {
+        $("#statusOfAddItem").empty();
+        $.getJSON('storage/data.json', (json) => {
+            data = json;
+
+        }).done(() => {
+            let formData = $('form').serializeArray()
+            barcode = formData[4].value
+            barcodes = Object.keys(_.groupBy(data, '4'))
+            if (eltInSet(barcodes, barcode)) {
+                $("#statusOfAddItem").html("This barcode already appears in the inventory!");
+                throw new Error("Already in inventory!");
+            }
+            if (formData[0].value === "") {
+                $.ajax({
+                    dataType: "json",
+                    url: `https://api.upcitemdb.com/prod/trial/lookup?upc=${barcode}`,
+                    data: data,
+                    async: false,
+                    success: function (data) {
+                        if(data["code"]==="OK"){
+                            formData[0].value=data["items"][0]["title"];
+                        }
+                    }
+                });
+            }
+            console.log(formData)
+            let addedArray = Array();
+            for (let i = 0; i < formData.length; i++) {
+                addedArray.push(formData[i].value)
+            }
+            let returnData = Array()
+
+            for (let i = 0; i < data.length; i++) {
+                returnData.push(data[i])
+            }
+            returnData.push(addedArray)
+            var fs = require("fs");
+            fs.writeFile('src/storage/data.json', JSON.stringify(returnData), 'utf8', ()=>{$("#statusOfAddItem").html("Successfully added to inventory.")});
+        })
+    })
+
+    function eltInSet(set, element) {
+        for (let i = 0; i < set.length; i++) {
+            if (set[i] == element) {
+                return true
+            }
+
+        }
+        return false
+    }
+
+</script>

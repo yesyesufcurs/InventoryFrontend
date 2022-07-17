@@ -1,0 +1,50 @@
+<h1>Alle Artikelen</h1>
+<div id="homeResults"></div>
+
+<script>
+    $.getJSON('storage/data.json', (json) => {
+        data = json;
+        console.log(data)
+
+    }).done(() => {
+
+        let table = document.createElement("table")
+        $("#homeResults").append(table);
+        $(table).append("<tr><td>Productname</td><td>Status</td><td>Day of purchase</td><td>Storage place</td><td>Barcode</td>")
+        for (let i = 0; i < data.length; i++) {
+            let tableRow = document.createElement("tr");
+            for (let j = 0; j < data[0].length; j++) {
+
+                let td = document.createElement("td");
+                $(td).append(data[i][j]);
+                $(tableRow).append(td);
+
+            }
+            $(table).append(tableRow);
+            $(tableRow).on("click", () => {
+                $("#homeResults").empty();
+                let itemTable = document.createElement("table");
+                $(itemTable).append(`<tr><td>Productname</td><td>${data[i][0]}</td></tr>`);
+                $(itemTable).append(`<tr><td>Status</td><td>${data[i][1]}</td></tr>`);
+                $(itemTable).append(`<tr><td>Day of purchase</td><td>${data[i][2]}</td></tr>`);
+                $(itemTable).append(`<tr><td>Storage place</td><td>${data[i][3]}</td></tr>`);
+                $(itemTable).append(`<tr><td>Barcode</td><td>${data[i][4]}</td></tr>`);
+                $(itemTable).append(`<tr><td>Invoice</td><td><a href="">Download</a></td></tr>`)
+                $("#homeResults").append(itemTable);
+                let back = document.createElement("button");
+                $(back).append("Ga terug")
+                $(back).on("click", () => {
+                    location.reload();
+                })
+                $("#homeResults").append(back);
+
+            })
+        }
+
+        // data[12][0]="Aanpassing succesvol!"
+        // var fs = require("fs");
+        // fs.writeFile('src/storage/data.json', JSON.stringify(data), 'utf8', console.log);
+
+
+    })
+</script>
